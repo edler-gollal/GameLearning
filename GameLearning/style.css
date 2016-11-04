@@ -1,0 +1,57 @@
+body {
+  font-family: sans-serif;
+}
+
+#header {
+  width: 100%;
+  height: 10%;
+  padding-bottom: 10px;
+  border-bottom: 2px solid lightgrey;
+}
+
+h1 {
+  display: inline;
+}
+
+h2 {
+  display: inline;
+  font-size: 1em;
+  color: gray;
+  float: right;
+}
+
+h3 {
+  margin-top: 30px;
+}
+
+#input {
+  width: 30%;
+  padding: 20px 20px 20px 30px;
+  border: 1px solid black;
+  margin-top: 20px;
+  display: none;
+}
+
+input {
+  display: block;
+  margin: 5px 0px;
+  width: 100%;
+}
+
+#canvas {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.left-canvas {
+  width: 30%;
+  padding: 20px 20px 20px 30px;
+  border: 1px solid black;
+  margin-top: 20px;
+  display: inline-block;
+}
+
+.right-canvas {
+  width: 60%;
+  border: 1px solid black;
+}
