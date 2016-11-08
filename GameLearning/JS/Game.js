@@ -2,7 +2,6 @@
 
 $(document).ready( function() {
   if(document.getElementById("display-game")!=null){
-    console.log("Using game display");
     loadVariables2();
     setupGame();
   }
@@ -17,12 +16,17 @@ var objectColor = "#80CBC4";
 var textColor = "#00796B";
 var outlineColor = "#4DB6AC";
 var score;
+var highScore = 0;
+var counter;
 var player;
 var obstacle;
 var gameState = "pregame";
 var nextObstacle;
 var networkOutput = [0,0];
 var learningState = [0,0,0];
+var gameSpeed;
+var tryNumber = 0;
+var isLearning = false;
 
 var speed;
 var distance;
@@ -30,8 +34,8 @@ var distance;
 function loadVariables2() {
   c2 = document.getElementById("display-game");
   ctx2 = c2.getContext("2d");
-  c2.setAttribute("height", $(window).height() * 0.8);
-  c2.setAttribute("width", $(window).width() * 0.65);
+  c2.setAttribute("height", $('#display-game').height());
+  c2.setAttribute("width", $('#display-game').width());
   platformHeight = (c2.height / 3) * 2;
   playerPositionX = c2.width / 5;
   player = {
@@ -47,14 +51,19 @@ function loadVariables2() {
       if(!this.midAir) {
         this.midAir = true;
         this.ySpeed += 25;
+        if(score == 0){
+          this.preObstacleJumpAmount++;
+        }
       }
-    }
+    },
+    preObstacleJumpAmount: 0
   }
   obstacle = {
     type: 0, //0 -> Disabled, 1 -> Jumping Obstacle, 2 -> Ducking Obstacle
     width: 20,
     height: 0,
     x: -25,
+    first: true,
     y: 0,
     realY: function() { return platformHeight-this.height-this.y; }
   }
@@ -63,27 +72,32 @@ function loadVariables2() {
 //Functions for running the game
 function setupGame() {
   score = 0;
+  counter = 0;
   player.y = 0;
   player.ySpeed = 0;
+  player.preObstacleJumpAmount = 0;
   nextObstacle = -1;
   obstacle.x = -25;
   speed = 10;
   obstacle.type = 0;
+  obstacle.first = true;
+  gameSpeed = document.getElementById('gameSpeed').value;
   renderGame();
-  distance = 200;
+  distance = 100;
+  tryNumber++;
 }
 function game() {
-  score++;
+  counter++;
   updatePlayerPosition();
   updateObstaclePosition();
   renderGame();
 
-  speed = 10 + parseInt(score/100)
-  distance = obstacle.x - player.x;
-  if(distance < -50) distance = 200;
-  if(distance > 200) distance = 200;
+  speed = 10 + parseInt(counter/100)
+  distance = (obstacle.x - player.x) / 5;
+  if(distance < -10) distance = 100;
+  if(distance > 100) distance = 100;
 
-  if (score == 50) nextObstacle = 0;
+  if (counter==50) nextObstacle = 0;
   if (nextObstacle > 0) nextObstacle--;
   if (nextObstacle == 0) {
     nextObstacle = -1;
@@ -91,14 +105,18 @@ function game() {
   }
 
   if (isColliding()) {
-    gameState = "over";
-    nextObstacle = -1;
+    gameState = "pregame";
+    if(score > highScore){
+      highScore = score;
+    }
+    if(!isLearning){
+      console.log("Try " + tryNumber + " is over, score: " + score);
+      setupGame();
+    }
   }
 
   if(gameState == "running") {
-    setTimeout(function() {
-      game();
-    },20);
+    setTimeout(game,gameSpeed);
   }
 }
 
@@ -124,7 +142,16 @@ function updateObstaclePosition() {
 }
 
 function createNewObstacle() {
+  score++;
   obstacle.type = parseInt(Math.random() * 2) + 1;
+  if(obstacle.first) {
+    obstacle.type = 1;
+    obstacle.first = false;
+    score--;
+    if(player.preObstacleJumpAmount > 0) {
+      obstacle.type = 2;
+    }
+  }
   obstacle.x = c2.width + 10;
   if(obstacle.type == 1) {
     obstacle.y = 0;
@@ -155,9 +182,11 @@ function renderGame () {
   drawObstacle();
   drawScore();
   drawGameState();
-  drawInputs();
-  drawOutput();
-  drawLearningState();
+  if(isLearning){
+    drawInputs();
+    drawOutput();
+    drawLearningState();
+  }
 }
 function drawBG () {
   ctx2.beginPath();
@@ -212,7 +241,7 @@ function drawPlayer() {
 function drawScore() {
   ctx2.fillStyle = textColor;
   ctx2.font = "20px Helvetica";
-  ctx2.fillText ("Score: " + score,5,22);
+  ctx2.fillText ("Score: " + score + " Highscore: " + highScore,5,22);
 }
 function drawGameState() {
   ctx2.fillStyle = textColor;
@@ -235,7 +264,7 @@ function drawObstacle() {
 function drawOutput() {
   ctx2.fillStyle = textColor;
   ctx2.font = "10px Helvetica";
-  var text = "Output: " + networkOutput[0] + ", " + networkOutput[1];
+  var text = "Output: " + networkOutput[0];
   ctx2.fillText(text,c2.width-5-ctx2.measureText(text).width,c2.height-10);
 }
 function drawInputs() {
@@ -254,7 +283,7 @@ function drawInputs() {
   ctx2.fillText("Type",c2.width-inputWidth-10-ctx2.measureText("Type").width,90);
 
   ctx2.beginPath();
-  var distancePercentage = (distance / 200) * (inputWidth-4);
+  var distancePercentage = (distance / 100) * (inputWidth-4);
   ctx2.rect(c2.width-distancePercentage-7,42,distancePercentage,8);
   var speedPercentage = (speed / 100) * (inputWidth-4);
   ctx2.rect(c2.width-speedPercentage-7,62,speedPercentage,8);
@@ -280,10 +309,10 @@ $(document).keydown(function(e) {
       player.ducking = true;
     break;
     case 32:
-      if(gameState=="over"){
-        gameState = "pregame";
-        setupGame();
-      } else if(gameState=="pregame"){
+      if((tryNumber == 1) && !(isLearning)){
+        document.getElementById('log').innerHTML = "";
+      }
+      if(gameState=="pregame"){
         gameState = "running";
         game();
       } else if(gameState=="running"){

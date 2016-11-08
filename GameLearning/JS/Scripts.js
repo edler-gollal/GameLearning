@@ -7,84 +7,50 @@ var Neuron = synaptic.Neuron,
     Trainer = synaptic.Trainer,
     Architect = synaptic.Architect;
 
-//Create Network
-var inputLayer = new Layer(2);
-var hiddenLayer = new Layer(5);
-var outputLayer = new Layer(1);
-
-inputLayer.project(hiddenLayer);
-hiddenLayer.project(outputLayer);
-
-var myNetwork = new Network ({
-  input: inputLayer,
-  hidden: [hiddenLayer],
-  output: outputLayer
-});
-
-//create Trainer
-var trainer = new Trainer (myNetwork);
-
-//Register Buttons
 $(document).ready( function() {
+  $('#display').height($(window).height() * 0.9);
 
-  activateWithInput()
-
-  $('#activate').mousedown(function() {
-    activateWithInput()
+  $('#startLearning').mousedown(function() {
+    document.getElementById('log').innerHTML = "";
+    var hl = document.getElementById('hiddenLayers').value;
+    var gs = document.getElementById('generationSize').value;
+    startLearning(hl,gs);
   });
 
-  $('#trainingActivate').mousedown(function() {
-    trainingActivate();
-  });
+  (function () {
+      var old = console.log;
+      var logger = document.getElementById('log');
+      console.log = function (message) {
+          if (typeof message == 'object') {
+              logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+          } if(message == " ") {
+              logger.innerHTML += '<br />';
+          } else {
+              logger.innerHTML += '<span class="log-message">' + message + '<span>';
+          }
+          var loggerContainer = document.getElementById('display-log')
+          loggerContainer.scrollTop = loggerContainer.scrollHeight;
+      }
+  })();
 
+  startMessage();
 });
-
-//Network Functions
-function activateWithInput () {
-  var inputs = getInputs();
-  setOutput(myNetwork.activate(inputs));
-}
-
-function trainingActivate () {
-  var inputs = getTrainingInputs();
-  for (var i=0; i<inputs[2]; i++) {
-    //myNetwork.activate(inputs[0]);
-    //myNetwork.propagate(inputs[3],[inputs[1]]);
-    myNetwork.activate([0,1]);
-    myNetwork.propagate(inputs[3], [1]);
-
-    myNetwork.activate([1,1]);
-    myNetwork.propagate(inputs[3], [0]);
-
-    myNetwork.activate([1,0]);
-    myNetwork.propagate(inputs[3], [1]);
-
-    myNetwork.activate([0,0]);
-    myNetwork.propagate(inputs[3], [0]);
-  }
-}
-
-
-//Functions
-function getInputs () {
-  var input1 = document.getElementById('input1').value;
-  var input2 = document.getElementById('input2').value;
-  return [input1, input2];
-}
-
-function getTrainingInputs () {
-  var input1 = document.getElementById('trainingInput1').value;
-  var input2 = document.getElementById('trainingInput2').value;
-  var output = document.getElementById('trainingOutput').value;
-  var amount = document.getElementById('trainingAmount').value;
-  var learningRate = document.getElementById('trainingLearningRate').value;
-  return [[input1, input2],output,amount,learningRate];
-}
-
-function setOutput (output) {
-  document.getElementById('output').innerHTML = output;
-}
 
 function sortNumber(a,b) {
   return b[0] - a[0];
+}
+
+function startMessage(){
+  console.log("An artificial neural network learns to play a game using a genetic algorithm.");
+  console.log(" ");
+  console.log(" ");
+  console.log("Controls:");
+  console.log("Start Game: Spacebar");
+  console.log("Jump: Up arrow");
+  console.log("Duck: Down arrow");
+  console.log("Start Gamelearning: Press 'Start Learning'");
+  console.log("You can also configure network and algorithm in the Section above.")
+  console.log(" ");
+  console.log(" ");
+  console.log("Enjoy!");
 }

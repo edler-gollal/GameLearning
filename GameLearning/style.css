@@ -24,34 +24,83 @@ h3 {
   margin-top: 30px;
 }
 
-#input {
-  width: 30%;
-  padding: 20px 20px 20px 30px;
-  border: 1px solid black;
-  margin-top: 20px;
+input {
+  display: block;
+  margin: 5px 0px 15px 0px;
+  width: 100%;
+}
+
+button {
+  border-radius: 2px;
+  margin-bottom: 10px;
+  color: white;
+  background-color: red;
+  padding: .4em;
+}
+
+.hidden {
   display: none;
 }
 
-input {
-  display: block;
-  margin: 5px 0px;
+#display {
   width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-#canvas {
-  margin-top: 20px;
-  width: 100%;
-}
-
-.left-canvas {
+#display-network {
+  position: absolute;
   width: 30%;
-  padding: 20px 20px 20px 30px;
+  height: 33.33%;
   border: 1px solid black;
-  margin-top: 20px;
-  display: inline-block;
 }
 
-.right-canvas {
-  width: 60%;
+#display-input {
+  position: absolute;
+  width: 30%;
+  height: 33.33%;
   border: 1px solid black;
+  top: 33.33%;
+}
+
+#input {
+  padding: 20px;
+}
+
+#display-log {
+  position: absolute;
+  width: 30%;
+  height: 33.33%;
+  border: 1px solid black;
+  top: 66.66%;
+  background: black;
+  color: green;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+#log {
+  padding: 20px;
+  font-family: "Courier";
+  font-size: 10px;
+}
+
+.log-message {
+  margin-left: 5px;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.log-message::before {
+  content: "» ";
+  margin-left: -10px;
+}
+
+#display-game {
+  position: absolute;
+  width: 70%;
+  height: 100%;
+  border: 1px solid black;
+  right: 0;
+  top: 0;
 }

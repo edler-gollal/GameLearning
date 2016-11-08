@@ -1,6 +1,5 @@
 $(document).ready( function() {
   if(document.getElementById("display-network")!=null){
-    console.log("Using network display");
     loadVariables1();
   }
 });
@@ -17,8 +16,8 @@ function loadVariables1() {
   ctx1 = c1.getContext("2d");
 
   //Set correct height and width of canvas
-  c1.setAttribute("height", $(window).height() * 0.8);
-  c1.setAttribute("width", $(window).width() * 0.65);
+  c1.setAttribute("height", $('#display-network').height());
+  c1.setAttribute("width", $('#display-network').width());
 }
 
 function loadNetworkVariables(network) {
@@ -70,6 +69,7 @@ function drawLine (fr,to,weight) {
   ctx1.beginPath();
   ctx1.moveTo(fromPos[0],fromPos[1]);
   var width = Math.abs(weight) * 25 + 0.5;
+  if(width > 10) width = 10;
   ctx1.lineWidth = width;
   ctx1.lineTo(toPos[0],toPos[1]);
 
@@ -110,7 +110,8 @@ function setWeight(network,id,weight) {
 //Draw the input layer
 function drawNeurons () {
   for (var i = 0; i < getNeuronInfo(thisnetwork).length; i++) {
-    drawNeuron(getNeuronInfo(thisnetwork)[i][0],getNeuronInfo(thisnetwork)[i][1],i);
+    var neuronInfo = getNeuronInfo(thisnetwork)[i];
+    drawNeuron(neuronInfo[0],neuronInfo[1],i);
   }
 }
 
@@ -140,7 +141,7 @@ function getInputLayerPositions(network) {
   var neuronAmount = neurons.length;
   var neuronInfoReturn = [];
   for (var i = 0; i < neuronAmount; i++) {
-    var x = 70;
+    var x = 40;
     var y = 45 + i*2*5 + neuronRadius*2*i + neuronRadius*(i+1);
     neuronInfoReturn = neuronInfoReturn.concat([[x,y,"#E53935"]])
   }
@@ -155,7 +156,7 @@ function getHiddenLayerPositions(network) {
     var neurons = network.layers.hidden[l].neurons();
     var neuronAmount = neurons.length;
     for (var i = 0; i < neuronAmount; i++) {
-      var x = 70 + (c1.width/layerAmount)*(l+1);
+      var x = 40 + (c1.width/layerAmount)*(l+1);
       var y = 45 + i*2*5 + neuronRadius*2*i + neuronRadius*(i+1);
       neuronInfoReturn = neuronInfoReturn.concat([[x,y,"#42A5F5"]])
     }
@@ -168,7 +169,7 @@ function getOutputLayerPositions(network) {
   var neuronAmount = neurons.length;
   var neuronInfoReturn = [];
   for (var i = 0; i < neuronAmount; i++) {
-    var x = 70 + (c1.width/layerAmount)*(network.layers.hidden.length + 1);
+    var x = 40 + (c1.width/layerAmount)*(network.layers.hidden.length + 1);
     var y = 45 + i*2*5 + neuronRadius*2*i + neuronRadius*(i+1);
     neuronInfoReturn = neuronInfoReturn.concat([[x,y,"#00897B"]])
   }
