@@ -172,8 +172,3 @@ function mutateGenome(genome) {
 function setFitness(id,fitness) {
   currentGeneration[id-1][0] = fitness;
 }
-function updateData() {
-  data.labels.push("Generation: " + generations + " Genome: " + currentNetworkID);
-  data.datasets[0].data.push(score);
-  loadChart();
-}
