@@ -68,8 +68,8 @@ function drawLine (fr,to,weight) {
 
   ctx1.beginPath();
   ctx1.moveTo(fromPos[0],fromPos[1]);
-  var width = Math.abs(weight) * 25 + 0.5;
-  if(width > 10) width = 10;
+  var width = Math.abs(weight) + 0.2;
+  if(width > 3) width = 3;
   ctx1.lineWidth = width;
   ctx1.lineTo(toPos[0],toPos[1]);
 
