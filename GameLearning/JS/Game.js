@@ -46,9 +46,15 @@ function loadVariables2() {
     x: playerPositionX,
     realY: function() { return platformHeight-this.height-this.y; },
     midAir: false,
+    doubleJumped: false,
     ducking: false,
     jump: function() {
-      if(!this.midAir) {
+      if(this.midAir) {
+        if(this.doubleJumped == "feature disabled") {
+          this.doubleJumped = true;
+          this.ySpeed += 40;
+        }
+      } else {
         this.midAir = true;
         this.ySpeed += 25;
         if(score == 0){
@@ -128,6 +134,7 @@ function updatePlayerPosition() {
     player.y = 0;
     player.ySpeed = 0;
     player.midAir = false;
+    player.doubleJumped = false;
   }
 }
 
