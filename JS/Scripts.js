@@ -51,6 +51,6 @@ function startMessage(){
   console.log("Duck: Down arrow");
   console.log("Start Gamelearning: Press 'Start Learning'");
   console.log("line");
-  console.log("You can also configure network and algorithm in the Section above.")
+  console.log("You can also configure network and algorithm in the section above.")
   console.log("Enjoy!");
 }
